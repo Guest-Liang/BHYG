@@ -59,7 +59,7 @@ class BHYG(metaclass=ProtectedMeta):
             self.DEBUG = True
         else:
             self.DEBUG = False
-        print(f"Version: {VERSION} OSS Ethan")
+        print(f"Version: {VERSION} Ethan")
         self.phrases = {}
         if sys.platform == "win32":
             self.platform = "windows"
@@ -79,7 +79,7 @@ class BHYG(metaclass=ProtectedMeta):
                 level="INFO",
                 format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <cyan>"
                 + self.machine_id[:7]
-                + "</cyan> | <level>{level: <8}</level> | <level>{message}</level>",
+                + "</cyan> | <magenta>OSS</magenta> | <level>{level: <8}</level> | <level>{message}</level>",
             )
         else:
             logger.add(
@@ -87,7 +87,7 @@ class BHYG(metaclass=ProtectedMeta):
                 level="DEBUG",
                 format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <cyan>"
                 + self.machine_id[:7]
-                + "</cyan> | <cyan>{function}</cyan> | <level>{level: <8}</level> | <level>{message}</level>",
+                + "</cyan> | <magenta>OSS调试模式</magenta> | <cyan>{function}</cyan> | <level>{level: <8}</level> | <level>{message}</level>",
             )
             logger.success("Debug mode is ON")
         logger.info(f"Machine ID: {self.machine_id}")

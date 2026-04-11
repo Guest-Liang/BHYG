@@ -23,6 +23,8 @@ BANNER = """
 3 年过去，愿初心仍在。
 """
 
+REGULAR_PROJECT_ID_MSG = "常用ProjectId:\n上海·星铁LAND2026: 115413"
+DEFAULT_PID = 115413
 
 def is_terminal_available():
     try:
@@ -58,6 +60,11 @@ def select_ticket():
         8: client.i18n("sale_status_8"),
         9: client.i18n("sale_status_9"),
     }
+    logger.info(REGULAR_PROJECT_ID_MSG)
+    project_id = questionary.text(
+        client.i18n("project_id"), validate=lambda text: text.isdigit(),
+        default=str(DEFAULT_PID),
+    ).ask()
     project_id = questionary.text(
         client.i18n("project_id"), validate=lambda text: text.isdigit()
     ).ask()

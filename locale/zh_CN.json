@@ -284,7 +284,7 @@
     "no_unpaid_order": "没有未支付订单，订单列表如下：\n",
     "order_status_unknown": "未知订单状态",
     "prefill_base_info": "存在预填信息: 场次 {screen} SKU {sku} 张数 {count} {buyer_info}",
-    "use_prefill_base_info": "是否使用B站预填信息？",
+    "use_prefill_base_info": "是否使用 B站 预填信息？",
     "select_account": "请选择登录账号",
-    "prefill_support": "本项目支持预填，您可在哔哩哔哩APP预填信息后在BHYG一键使用"
+    "prefill_support": "本项目支持预填，您可在哔哩哔哩 APP 预填信息后在 BHYG 一键使用"
 }

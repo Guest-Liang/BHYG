@@ -207,31 +207,11 @@ class BHYG(metaclass=ProtectedMeta):
     def select_language(self):
         lang = questionary.select(
             self.i18n("select_language"),
-            choices=["English", "简体中文", "简体中文 (猫娘)", "日本語"],
+            choices=["简体中文"],
         ).ask()
         if lang == "简体中文":
             logger.debug("Language set to zh_CN")
             self.set_lang("zh_CN")
-        elif lang == "English":
-            logger.debug("Language set to en_US")
-            logger.info(
-                "You can collaborate on BHYG on Crowdin: https://crowdin.com/project/bhyg"
-            )
-            self.set_lang("en_US")
-        elif lang == "简体中文 (猫娘)":
-            logger.warning("BHYG 猫娘版 尚不完全，如无法理解请切换中文版")
-            logger.info(
-                "主人可以在 Crowdin 上帮助本喵变得更可爱喵: https://crowdin.com/project/bhyg"
-            )
-            logger.debug("Language set to zh_CN_CAT")
-            self.set_lang("zh_CN_CAT")
-        elif lang == "日本語":
-            logger.warning("日本語訳は機械翻訳であり、誤りが含まれている可能性があります。")
-            logger.info(
-                "CrowdinでBHYGの翻訳に協力することができます: https://crowdin.com/project/bhyg"
-            )
-            logger.debug("Language set to ja_JP")
-            self.set_lang("ja_JP")
         else:
             logger.debug("Language not supported, set to zh_CN")
             self.set_lang("zh_CN")

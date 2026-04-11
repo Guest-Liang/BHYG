@@ -91,6 +91,78 @@ def select_ticket():
     if client.config["hotProject"]:
         logger.warning(client.i18n("hot_project"))
     client.config["id_bind"] = resp["data"]["id_bind"]
+    # prefill support
+    if resp["data"].get("preFillSupport", False) and not resp["data"].get("preFillBaseInfo", None):
+        logger.info(client.i18n("prefill_support"))
+    if resp["data"].get("preFillBaseInfo", None):
+        logger.debug("preFillBaseInfo: {}".format(resp["data"].get("preFillBaseInfo", None)))
+        logger.debug("preFillRealnameInfo: {}".format(resp["data"].get("preFillRealnameInfo", None)))
+        screenId = resp["data"]["preFillBaseInfo"].get("screenId", None)
+        skuId = resp["data"]["preFillBaseInfo"].get("skuId", None)
+        count = resp["data"]["preFillBaseInfo"].get("count", None)
+        preFillTime = resp["data"]["preFillBaseInfo"].get("preFillTime", None)
+        screens = resp["data"]["screen_list"]
+        prefilled_screen = None
+        for screen in screens:
+            if str(screen["id"]) == str(screenId):
+                prefilled_screen = screen
+                break
+        tickets = prefilled_screen["ticket_list"] if prefilled_screen else []
+        prefilled_sku = None
+        for ticket in tickets:
+            if str(ticket["id"]) == str(skuId):
+                prefilled_sku = ticket
+                break
+        buyer_list = client.client.get(
+            "https://show.bilibili.com/api/ticket/buyer/list?nomask=1"
+        )
+        prefilled_buyer_id_buyer = []
+        if buyer_list["code"] == 0:
+            for buyer in buyer_list["data"]["list"]:
+                if buyer["id"] in resp["data"]["preFillRealnameInfo"].get("buyerIds", []):
+                    prefilled_buyer_id_buyer.append({
+                        "id": buyer["id"],
+                        "name": buyer["name"],
+                        "tel": buyer["tel"],
+                        "personal_id": buyer["personal_id"],
+                        "id_type": buyer["id_type"],
+                    })
+        id_type_name = {
+            0: client.i18n("id_type_idcard"),
+            1: client.i18n("id_type_passport"),
+            2: client.i18n("id_type_hk_macau"),
+            3: client.i18n("id_type_taiwan"),
+        }
+
+        logger.info(client.i18n("prefill_base_info").format(
+            # screenId=screenId,
+            # skuId=skuId,
+            screen=prefilled_screen["name"] if prefilled_screen else None,
+            sku=prefilled_sku["desc"] if prefilled_sku else None,
+            count=count,
+            buyer_info=", ".join([client.i18n("buyer_info").format(
+                name=buyer["name"],
+                tel=buyer["tel"],
+                personal_id=buyer["personal_id"],
+                id_type=id_type_name[buyer["id_type"]],
+            ) for buyer in prefilled_buyer_id_buyer]) if prefilled_buyer_id_buyer else None,
+        ))
+        if_use_prefill = questionary.confirm(client.i18n("use_prefill_base_info")).ask()
+        if if_use_prefill:
+            client.config["screen_id"] = int(screenId) if screenId else None
+            client.config["sku_id"] = int(skuId) if skuId else None
+            client.config["sale_start_time"] = int(time.mktime(time.strptime(prefilled_sku["sale_start"], "%Y-%m-%d %H:%M:%S"))) if prefilled_sku and prefilled_sku.get("sale_start", None) else None
+            client.config["count"] = int(count) if count else None
+            client.config["pay_money"] = int(prefilled_sku["price"]) * int(count) if prefilled_sku and count else None
+            # ticket_name
+            client.config["ticket_name"] = f"{resp['data']['name']} {prefilled_screen['name'] if prefilled_screen else ''} {prefilled_sku['desc'] if prefilled_sku else ''}"
+            client.config["order_type"] = 1
+            client.config["id_buyer"] = prefilled_buyer_id_buyer
+            client.config["buyer"] = resp["data"]["preFillRealnameInfo"]["name"]
+            client.config["tel"] = resp["data"]["preFillRealnameInfo"]["phone"]
+            client.save_config()
+            return
+
     client.config["is_changfan"] = False
     changfan = client.client.get(
         "https://show.bilibili.com/api/ticket/linkgoods/list?project_id={}&page_type=0".format(

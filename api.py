@@ -150,7 +150,7 @@ class BHYG(metaclass=ProtectedMeta):
         
     def get_login_state(self):
         while True:
-            self.switch_account()
+            self.switch_account(on_start=True)
             is_login, data = self.client.check_login()
             if is_login:
                 logger.info(self.i18n("welcome_login").format(username=data["uname"]))
@@ -168,7 +168,7 @@ class BHYG(metaclass=ProtectedMeta):
                 continue
 
     
-    def switch_account(self):
+    def switch_account(self, on_start=False):
         self.ensure_config_folder()
         accounts = []
         files = os.listdir("bhyg_config")
@@ -181,6 +181,13 @@ class BHYG(metaclass=ProtectedMeta):
             self.i18n("select_account"), choices=accounts
         ).ask()
         if uid is None:
+            if on_start:
+                logger.info(self.i18n("exit"))
+                sentry_sdk.capture_message(
+                    "Exit",
+                    level="info",
+                )
+                sys.exit(0)
             logger.error(self.i18n("canceled"))
             return
         if uid == self.i18n("qr_code"):

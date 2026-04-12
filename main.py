@@ -26,12 +26,6 @@ BANNER = """
 REGULAR_PROJECT_ID_MSG = "常用ProjectId:\n上海·星铁LAND2026: 115413"
 DEFAULT_PID = 115413
 
-def get_app_path():
-    if getattr(sys, 'frozen', False):
-        return os.path.dirname(sys.argv[0])
-    else:
-        return os.path.dirname(__file__)
-
 def is_terminal_available():
     try:
         return sys.stdout.isatty() and sys.stderr.isatty()
@@ -419,8 +413,6 @@ def main():
     # Init
 
     print(BANNER)
-
-    os.chdir(get_app_path())
 
     atexit.register(exit_handler)
     normal_exit = False

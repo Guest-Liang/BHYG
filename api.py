@@ -40,16 +40,6 @@ class ProtectedMeta(type):
             raise AttributeError(f"Cannot override {name} in class {cls.__name__}")
         super().__setattr__(name, value)
 
-def get_resource_path():
-    try:
-        base_path = globals().get('__compiled__', None).containing_dir
-    except (AttributeError, TypeError):
-        if getattr(sys, 'frozen', False):
-            base_path = os.path.dirname(sys.executable)
-        else:
-            base_path = os.path.dirname(__file__)
-    return base_path
-
 @final
 class BHYG(metaclass=ProtectedMeta):
     def __new__(cls, *args, **kwargs):
@@ -368,7 +358,7 @@ class BHYG(metaclass=ProtectedMeta):
     def load_phrases(self, lang="zh_CN"):
         try:
             locale_file_path = (
-                get_resource_path() + os.path.sep + f"locale/{lang}.json"
+                os.path.dirname(sys.argv[0]) + os.path.sep + f"locale/{lang}.json"
             )
             with open(locale_file_path, "r", encoding="utf-8") as f:
                 return json.load(f)

@@ -282,10 +282,10 @@ def select_ticket():
         client.config["sale_start_time"] = int(
             time.mktime(time.strptime(sku["sale_start"], "%Y-%m-%d %H:%M:%S"))
         )
-        client.config["pay_money"] = sku["price"]
     except ValueError:
         logger.warning(client.i18n("sale_start_time_not_found"))
         client.config["sale_start_time"] = 0
+    client.config["pay_money"] = sku["price"]
     client.config["sku_id"] = int(sku["id"])
     ticket_name += f"{sku['desc']}"
     client.config["count"] = questionary.text(
